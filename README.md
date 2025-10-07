@@ -36,7 +36,8 @@ curl -X POST -H "Content-Type: application/json" \
 
 - **SMTP_USER**=your_smtp_mail@gmail.com
 - **SMTP_PASS**="your_smtp_mail_password"
-  **Mail is send on call of this API**: {{base_url}}/api/repayments
+
+**Mail is send on call of this API**: {{base_url}}/api/repayments
 
 ## 📚 Full Documentation
 
