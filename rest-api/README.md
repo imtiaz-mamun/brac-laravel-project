@@ -47,7 +47,8 @@ php artisan serve
 ## ✨ Features
 
 - **🔐 JWT Authentication** with client-specific endpoints
-- **📊 Advanced Analytics** with loan performance metrics
+- **� Email Notifications** for repayment confirmations with professional templates
+- **�📊 Advanced Analytics** with loan performance metrics
 - **🐳 Docker Environment** with MySQL, Redis, Nginx, and management tools
 - **🔄 Complete CRUD Operations** for all entities
 - **📈 Real-time Analytics** with caching optimization

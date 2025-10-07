@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Repayment;
 use App\Models\Loan;
+use App\Events\RepaymentCreated;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -86,7 +87,10 @@ class RepaymentController extends Controller
             }
         });
 
-        $repayment->load('loan.client');
+        $repayment->load('loan.client', 'loan.branch');
+
+        // Fire event for email notification
+        event(new RepaymentCreated($repayment));
 
         return response()->json([
             'message' => 'Repayment recorded successfully',
@@ -175,4 +179,6 @@ class RepaymentController extends Controller
             ]
         ]);
     }
+
+
 }

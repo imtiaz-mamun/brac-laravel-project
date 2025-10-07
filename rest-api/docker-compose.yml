@@ -15,18 +15,9 @@ services:
       - "8000:8000"
     networks:
       - microfinance-network
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=microfinance_db
-      - DB_USERNAME=microfinance_user
-      - DB_PASSWORD=microfinance_password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - CACHE_DRIVER=redis
-      - SESSION_DRIVER=redis
-      - QUEUE_CONNECTION=redis
+    env_file:
+      - .env.docker
+
     depends_on:
       - mysql
       - redis

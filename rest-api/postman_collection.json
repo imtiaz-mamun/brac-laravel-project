@@ -833,7 +833,7 @@
 								"repayments"
 							]
 						},
-						"description": "Record a new loan repayment"
+						"description": "Record a new loan repayment. 📧 Automatically sends email notification to client (if email available) and admin (CC_MAIL). Email includes payment confirmation, loan details, and updated balance."
 					}
 				},
 				{
