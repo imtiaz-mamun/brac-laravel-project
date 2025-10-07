@@ -1,0 +1,984 @@
+{
+	"info": {
+		"_postman_id": "brac-microfinance-api",
+		"name": "BRAC Microfinance API",
+		"description": "Complete API collection for BRAC Microfinance Loan Management System with JWT authentication, client management, loan operations, and repayment tracking.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string",
+			"description": "Base URL for API (works for both local SQLite and Docker MySQL setups)"
+		},
+		{
+			"key": "api_token",
+			"value": "",
+			"type": "string",
+			"description": "JWT token for authenticated requests (auto-set after login)"
+		},
+		{
+			"key": "docker_url",
+			"value": "http://localhost:8000",
+			"type": "string",
+			"description": "Docker environment URL (same as base_url, but for reference)"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{api_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get API Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.collectionVariables.set('api_token', responseJson.access_token);",
+									"    console.log('Token set:', responseJson.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"abdul.karim16@microcredit.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/get-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"get-token"
+							]
+						},
+						"description": "Authenticate and get JWT token for API access. Valid test emails:\n- abdul.karim16@microcredit.com\n- abdul.karim33@microcredit.com\n- abdur.rahman18@microcredit.com\n- abdur.rahman9@microcredit.com\n- abu.bakkar23@microcredit.com\nPassword for all: password123"
+					}
+				},
+				{
+					"name": "Register New Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Client\",\n    \"email\": \"test.client@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"phone\": \"01712345678\",\n    \"gender\": \"FEMALE\",\n    \"branch_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new client with authentication credentials"
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh JWT token"
+					}
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get authenticated user profile"
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout and invalidate token"
+					}
+				}
+			],
+			"description": "JWT Authentication endpoints for client access"
+		},
+		{
+			"name": "Client API (Authenticated)",
+			"item": [
+				{
+					"name": "Get My Loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/client/loans",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"client",
+								"loans"
+							]
+						},
+						"description": "Get all loans for the authenticated client"
+					}
+				},
+				{
+					"name": "Get Loan Repayment History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/client/loan-repayment-history?loan_id=1&page=1&per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"client",
+								"loan-repayment-history"
+							],
+							"query": [
+								{
+									"key": "loan_id",
+									"value": "1",
+									"description": "Optional: Filter by specific loan ID"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number for pagination"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page (max 50)"
+								}
+							]
+						},
+						"description": "Get repayment history for the authenticated client's loans"
+					}
+				}
+			],
+			"description": "Client-specific authenticated endpoints"
+		},
+		{
+			"name": "Branch Management",
+			"item": [
+				{
+					"name": "Get All Branches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/branches",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"branches"
+							]
+						},
+						"description": "Get list of all branches"
+					}
+				},
+				{
+					"name": "Get Branch by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/branches/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"branches",
+								"1"
+							]
+						},
+						"description": "Get specific branch details"
+					}
+				},
+				{
+					"name": "Create Branch",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Branch Name\",\n    \"district\": \"District Name\",\n    \"region\": \"Region Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/branches",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"branches"
+							]
+						},
+						"description": "Create a new branch"
+					}
+				},
+				{
+					"name": "Update Branch",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Branch Name\",\n    \"district\": \"Updated District\",\n    \"region\": \"Updated Region\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/branches/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"branches",
+								"1"
+							]
+						},
+						"description": "Update branch information"
+					}
+				},
+				{
+					"name": "Delete Branch",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/branches/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"branches",
+								"1"
+							]
+						},
+						"description": "Delete a branch"
+					}
+				}
+			],
+			"description": "Branch management endpoints"
+		},
+		{
+			"name": "Client Management",
+			"item": [
+				{
+					"name": "Get All Clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clients?page=1&per_page=20&branch_id=1&gender=FEMALE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "20",
+									"description": "Items per page"
+								},
+								{
+									"key": "branch_id",
+									"value": "1",
+									"description": "Filter by branch ID"
+								},
+								{
+									"key": "gender",
+									"value": "FEMALE",
+									"description": "Filter by gender (MALE/FEMALE)"
+								}
+							]
+						},
+						"description": "Get list of clients with filtering options"
+					}
+				},
+				{
+					"name": "Get Client by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clients/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"1"
+							]
+						},
+						"description": "Get specific client details with branch and loans"
+					}
+				},
+				{
+					"name": "Create Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Client Name\",\n    \"gender\": \"FEMALE\",\n    \"branch_id\": 1,\n    \"registration_date\": \"2024-01-15\",\n    \"email\": \"new.client@example.com\",\n    \"phone\": \"01712345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							]
+						},
+						"description": "Create a new client"
+					}
+				},
+				{
+					"name": "Update Client",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Client Name\",\n    \"gender\": \"MALE\",\n    \"branch_id\": 2,\n    \"phone\": \"01987654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clients/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"1"
+							]
+						},
+						"description": "Update client information"
+					}
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clients/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"1"
+							]
+						},
+						"description": "Delete a client"
+					}
+				}
+			],
+			"description": "Client management endpoints"
+		},
+		{
+			"name": "Loan Management",
+			"item": [
+				{
+					"name": "Get All Loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/loans?status=ACTIVE&client_id=1&branch_id=1&page=1&per_page=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE",
+									"description": "Filter by status (ACTIVE/CLOSED/DEFAULTED)"
+								},
+								{
+									"key": "client_id",
+									"value": "1",
+									"description": "Filter by client ID"
+								},
+								{
+									"key": "branch_id",
+									"value": "1",
+									"description": "Filter by branch ID"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "20",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get list of loans with filtering options"
+					}
+				},
+				{
+					"name": "Get Loan by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/loans/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"1"
+							]
+						},
+						"description": "Get specific loan details with client and repayments"
+					}
+				},
+				{
+					"name": "Create Loan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\": 1,\n    \"branch_id\": 1,\n    \"loan_amount\": 50000,\n    \"interest_rate\": 12.5,\n    \"issue_date\": \"2024-01-15\",\n    \"tenure_months\": 24,\n    \"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/loans",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans"
+							]
+						},
+						"description": "Create a new loan"
+					}
+				},
+				{
+					"name": "Update Loan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interest_rate\": 13.0,\n    \"status\": \"CLOSED\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/loans/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"1"
+							]
+						},
+						"description": "Update loan information"
+					}
+				},
+				{
+					"name": "Delete Loan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/loans/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"1"
+							]
+						},
+						"description": "Delete a loan"
+					}
+				}
+			],
+			"description": "Loan management endpoints"
+		},
+		{
+			"name": "Repayment Management",
+			"item": [
+				{
+					"name": "Get All Repayments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/repayments?loan_id=1&payment_mode=CASH&page=1&per_page=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"repayments"
+							],
+							"query": [
+								{
+									"key": "loan_id",
+									"value": "1",
+									"description": "Filter by loan ID"
+								},
+								{
+									"key": "payment_mode",
+									"value": "CASH",
+									"description": "Filter by payment mode (CASH/BANK/MOBILE)"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "per_page",
+									"value": "20",
+									"description": "Items per page"
+								}
+							]
+						},
+						"description": "Get list of repayments with filtering options"
+					}
+				},
+				{
+					"name": "Get Repayment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/repayments/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"repayments",
+								"1"
+							]
+						},
+						"description": "Get specific repayment details with loan information"
+					}
+				},
+				{
+					"name": "Create Repayment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"loan_id\": 1,\n    \"payment_date\": \"2024-01-15\",\n    \"amount_paid\": 2500.00,\n    \"payment_mode\": \"BANK\",\n    \"reference_no\": \"TXN-12345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/repayments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"repayments"
+							]
+						},
+						"description": "Record a new loan repayment"
+					}
+				},
+				{
+					"name": "Update Repayment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount_paid\": 2600.00,\n    \"payment_mode\": \"MOBILE\",\n    \"reference_no\": \"TXN-87654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/repayments/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"repayments",
+								"1"
+							]
+						},
+						"description": "Update repayment information"
+					}
+				},
+				{
+					"name": "Delete Repayment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/repayments/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"repayments",
+								"1"
+							]
+						},
+						"description": "Delete a repayment record"
+					}
+				}
+			],
+			"description": "Repayment management endpoints"
+		},
+		{
+			"name": "Analytics & Reports",
+			"item": [
+				{
+					"name": "Branch Performance Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/analytics/branch-performance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"analytics",
+								"branch-performance"
+							]
+						},
+						"description": "Get performance metrics for all branches"
+					}
+				},
+				{
+					"name": "Loan Portfolio Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/analytics/loan-portfolio",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"analytics",
+								"loan-portfolio"
+							]
+						},
+						"description": "Get overall loan portfolio statistics"
+					}
+				},
+				{
+					"name": "Monthly Repayment Trends",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/analytics/repayment-trends?months=12",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"analytics",
+								"repayment-trends"
+							],
+							"query": [
+								{
+									"key": "months",
+									"value": "12",
+									"description": "Number of months to analyze"
+								}
+							]
+						},
+						"description": "Get repayment trends over specified period"
+					}
+				}
+			],
+			"description": "Analytics and reporting endpoints"
+		}
+	]
+}
