@@ -32,6 +32,13 @@ curl -X POST -H "Content-Type: application/json" \
   http://localhost:8000/api/auth/get-token
 ```
 
+## Set these .env.docker variables with actual value
+
+- **SMTP_USER**=your_smtp_mail@gmail.com
+- **SMTP_PASS**="your_smtp_mail_password"
+
+## Mail is send on call of this API: {{base_url}}/api/repayments
+
 ## 📚 Full Documentation
 
 - **Complete Guide**: [📖 DOCKER_DEPLOYMENT.md](rest-api/DOCKER_DEPLOYMENT.md)
