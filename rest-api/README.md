@@ -18,6 +18,10 @@ A comprehensive, production-ready RESTful API backend built with Laravel for man
 git clone https://github.com/imtiaz-mamun/brac-laravel-project.git
 cd brac-laravel-project/rest-api
 
+# Set these .env.docker variables with actual value
+SMTP_USER=your_smtp_mail@gmail.com
+SMTP_PASS="your_smtp_mail_password"
+
 # Deploy with Docker
 docker-compose up -d --build
 
@@ -32,6 +36,10 @@ curl -H "Accept: application/json" http://localhost:8000/api/branches
 ```bash
 # Install dependencies
 composer install
+
+# Set these .env.example variables with actual value
+SMTP_USER=your_smtp_mail@gmail.com
+SMTP_PASS="your_smtp_mail_password"
 
 # Setup environment
 cp .env.example .env
